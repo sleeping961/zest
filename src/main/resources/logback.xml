@@ -1,0 +1,50 @@
+<configuration>
+
+    <!-- 定义日志存放路径和文件名 -->
+    <property name="LOG_PATH" value="/path/to/your/log/directory" />
+    <property name="LOG_ARCHIVE" value="${LOG_PATH}/archive" />
+    <property name="LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n" />
+
+    <!-- 定义日志的滚动策略 -->
+    <appender name="ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${LOG_PATH}/app.log</File>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_ARCHIVE}/app.%d{yyyy-MM-dd_HH}.log</fileNamePattern>
+            <maxHistory>168</maxHistory> <!-- 保留168小时（7天）的日志文件 -->
+        </rollingPolicy>
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 定义log级别日志的appender -->
+    <appender name="LOG" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 定义error级别日志的appender -->
+    <appender name="ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${LOG_PATH}/error.log</File>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_ARCHIVE}/error.%d{yyyy-MM-dd_HH}.log</fileNamePattern>
+            <maxHistory>168</maxHistory> <!-- 保留168小时（7天）的日志文件 -->
+        </rollingPolicy>
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 设置日志级别 -->
+    <root level="INFO">
+        <appender-ref ref="ROLLING" />
+        <appender-ref ref="LOG" />
+    </root>
+
+    <!-- 将error级别的日志输出到ERROR appender -->
+    <logger name="org.springframework" level="ERROR">
+        <appender-ref ref="ERROR" />
+    </logger>
+
+</configuration>
